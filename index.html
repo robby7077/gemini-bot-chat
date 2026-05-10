@@ -69,9 +69,15 @@
 
     <div id="chat-box"></div>
 
-    <input type="text" id="user-input" placeholder="Tulis pesan...">
+    <input
+      type="text"
+      id="user-input"
+      placeholder="Tulis pesan..."
+    >
 
-    <button onclick="sendMessage()">Send</button>
+    <button onclick="sendMessage()">
+      Send
+    </button>
 
   </div>
 
@@ -85,36 +91,51 @@
 
       const userMessage = input.value;
 
-      chatBox.innerHTML += `
-      <div class="user">${userMessage}</div>
-      `;
-
-      const response = await fetch("http://localhost:3000/api/chat", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-
-          conversation: [
-            {
-              role: "user",
-              text: userMessage
-            }
-          ]
-
-        })
-
-      });
-
-      const data = await response.json();
+      if (!userMessage) return;
 
       chatBox.innerHTML += `
-      <div class="bot">${data.result}</div>
+        <div class="user">${userMessage}</div>
       `;
+
+      try {
+
+        const response = await fetch(
+          "http://localhost:3000/api/chat",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              conversation: [
+                {
+                  role: "user",
+                  text: userMessage
+                }
+              ]
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        chatBox.innerHTML += `
+          <div class="bot">
+            ${data.result || "Maaf, chatbot sedang sibuk. Silakan coba lagi beberapa saat."}
+          </div>
+        `;
+
+      } catch (error) {
+
+        chatBox.innerHTML += `
+          <div class="bot">
+            Error connection
+          </div>
+        `;
+
+      }
 
       input.value = "";
 
@@ -125,4 +146,5 @@
   </script>
 
 </body>
+
 </html>

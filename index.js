@@ -49,7 +49,7 @@ app.post('/api/chat', async (req, res) => {
     console.log(e);
 
     res.status(500).json({
-      error: e.message
+      error: "Customer Service Sedang Sibuk. Silahkan coba kembali."
     });
 
   }
